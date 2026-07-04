@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WARP: The Card Game — Realms Collide. Power Consumes.</title>
+  <meta name="description" content="WARP: The Card Game — a grimdark fantasy mobile TCG of two warring factions. Collect, build 50-card decks, and battle in live synchronous PvP. Join the waitlist." />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="warp_logo.png" />
+  <link rel="apple-touch-icon" href="warp_logo.png" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="WARP: The Card Game" />
+  <meta property="og:description" content="REALMS COLLIDE. POWER CONSUMES. A grimdark fantasy mobile TCG." />
+  <meta property="og:image" content="hero_banner.png" />
+  <meta property="og:type" content="website" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- PlayFab Client SDK -->
+  <script src="https://download.playfab.com/PlayFabClientApi.js"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script>
+    // Tailwind theme extension — grimdark palette
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gunmetal: '#1b1f24',
+            'gunmetal-dark': '#0c0e11',
+            'deep-purple': '#3b0764',
+            'warp-purple': '#7e22ce',
+            'toxic-green': '#7fff2a',
+            'toxic-green-dim': '#5bbf1e',
+          },
+          fontFamily: {
+            display: ['Cinzel', 'serif'],
+            body: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          keyframes: {
+            floaty: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-14px)' },
+            },
+            pulseGlow: {
+              '0%, 100%': { boxShadow: '0 0 20px rgba(126,34,206,0.55), 0 0 40px rgba(127,255,42,0.15)' },
+              '50%': { boxShadow: '0 0 34px rgba(126,34,206,0.9), 0 0 70px rgba(127,255,42,0.3)' },
+            },
+          },
+          animation: {
+            floaty: 'floaty 6s ease-in-out infinite',
+            pulseGlow: 'pulseGlow 3s ease-in-out infinite',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body {
+      background-color: #0c0e11;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 15% -10%, rgba(59,7,100,0.55), transparent 60%),
+        radial-gradient(ellipse 70% 50% at 100% 0%, rgba(127,255,42,0.08), transparent 55%),
+        radial-gradient(ellipse 90% 70% at 50% 120%, rgba(126,34,206,0.25), transparent 60%);
+    }
+    .text-glow-green { text-shadow: 0 0 18px rgba(127,255,42,0.5); }
+    .text-glow-purple { text-shadow: 0 0 22px rgba(126,34,206,0.7); }
+    .grain::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    /* Spinner */
+    .spinner {
+      width: 1.25rem;
+      height: 1.25rem;
+      border: 2px solid rgba(0,0,0,0.35);
+      border-top-color: #0c0e11;
+      border-radius: 9999px;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+
+<body class="grain font-body text-gray-200 antialiased selection:bg-toxic-green selection:text-gunmetal-dark overflow-x-hidden">
+
+  <!-- ============ HEADER ============ -->
+  <header class="relative z-10 border-b border-purple-500/20 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-6 pt-10 pb-6">
+      <img src="logo.png" alt="WARP: The Card Game" class="max-w-[300px] h-auto mx-auto mb-6" />
+
+      <nav class="flex items-center justify-center gap-4">
+        <!-- Discord -->
+        <a href="#" aria-label="Join our Discord"
+           class="group inline-flex items-center gap-2 rounded-lg border border-purple-500/40 bg-warp-purple/10 px-4 py-2 text-sm font-semibold text-purple-200 transition-all duration-300 hover:border-warp-purple hover:bg-warp-purple/25 hover:text-white hover:shadow-[0_0_20px_rgba(126,34,206,0.5)]">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M20.317 4.369A19.79 19.79 0 0 0 16.558 3.2a.074.074 0 0 0-.079.037c-.34.607-.719 1.4-.984 2.022a18.27 18.27 0 0 0-5.487 0 12.6 12.6 0 0 0-1-2.022.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C1.222 8.02.559 11.58.885 15.096a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.076.076 0 0 0-.04.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.055c.5-4.06-.838-7.593-2.766-10.7a.06.06 0 0 0-.031-.028ZM8.02 12.955c-1.183 0-2.157-1.086-2.157-2.42 0-1.333.955-2.42 2.157-2.42 1.21 0 2.176 1.096 2.157 2.42 0 1.334-.955 2.42-2.157 2.42Zm7.975 0c-1.183 0-2.157-1.086-2.157-2.42 0-1.333.955-2.42 2.157-2.42 1.21 0 2.176 1.096 2.157 2.42 0 1.334-.946 2.42-2.157 2.42Z"/>
+          </svg>
+          Discord
+        </a>
+        <!-- X / Twitter -->
+        <a href="#" aria-label="Follow us on X"
+           class="group inline-flex items-center gap-2 rounded-lg border border-toxic-green/30 bg-toxic-green/5 px-4 py-2 text-sm font-semibold text-toxic-green transition-all duration-300 hover:border-toxic-green hover:bg-toxic-green/15 hover:shadow-[0_0_20px_rgba(127,255,42,0.4)]">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.653l-5.214-6.817-5.966 6.817H1.68l7.73-8.835L1.254 2.25h6.826l4.712 6.231 5.452-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644Z"/>
+          </svg>
+          Follow
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="relative z-10">
+    <div class="max-w-7xl mx-auto px-6 py-16 md:py-24">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+        <!-- Left: Copy + Form -->
+        <div class="text-center lg:text-left">
+          <p class="inline-block mb-5 rounded-full border border-toxic-green/40 bg-toxic-green/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-toxic-green">
+            Grimdark Fantasy TCG · Mobile
+          </p>
+
+          <h1 class="font-display text-4xl sm:text-5xl xl:text-6xl font-black leading-[1.05] text-white">
+            REALMS <span class="text-warp-purple text-glow-purple">COLLIDE.</span><br />
+            POWER <span class="text-toxic-green text-glow-green">CONSUMES.</span>
+          </h1>
+
+          <p class="mt-6 text-lg text-gray-300/90 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+            Two warring factions tear at the seams of a dying world. Command corrupted
+            legions and radiant zealots alike in <span class="text-white font-semibold">WARP: The Card Game</span> —
+            a grimdark fantasy TCG built for the palm of your hand. Build ruthless decks,
+            duel in real time, and bend the Warp to your will.
+          </p>
+
+          <!-- Waitlist form -->
+          <form id="waitlist-form" onsubmit="submitWaitlist(event)"
+                class="mt-9 max-w-md mx-auto lg:mx-0">
+            <div class="flex flex-col sm:flex-row gap-3 p-2 rounded-2xl border border-purple-500/30 bg-gunmetal/60 backdrop-blur animate-pulseGlow">
+              <input id="waitlist-email" type="email" name="email" required
+                     autocomplete="email" placeholder="your@email.com"
+                     class="flex-1 bg-transparent px-4 py-3 text-white placeholder-gray-500 focus:outline-none" />
+              <button id="waitlist-btn" type="submit"
+                      class="inline-flex items-center justify-center gap-2 min-w-[168px] rounded-xl bg-toxic-green px-6 py-3 font-display font-bold uppercase tracking-wide text-gunmetal-dark transition-all duration-300 hover:bg-toxic-green-dim hover:shadow-[0_0_28px_rgba(127,255,42,0.6)] disabled:opacity-70 disabled:cursor-not-allowed">
+                <span id="waitlist-btn-label">Join the Waitlist</span>
+              </button>
+            </div>
+            <p id="waitlist-message" role="status" aria-live="polite" class="mt-4 min-h-[1.5rem] text-sm font-medium"></p>
+          </form>
+
+          <p class="mt-2 text-xs text-gray-500">No spam. Just Warp. Unsubscribe anytime.</p>
+        </div>
+
+        <!-- Right: Hero art -->
+        <div class="relative">
+          <div class="absolute -inset-4 bg-gradient-to-tr from-warp-purple/30 via-transparent to-toxic-green/20 blur-2xl rounded-3xl"></div>
+          <img src="hero_banner.png" alt="Warp TCG Key Art"
+               class="relative rounded-xl shadow-2xl border border-purple-500/30" />
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES / ART ============ -->
+  <section class="relative z-10 border-t border-purple-500/15">
+    <div class="max-w-7xl mx-auto px-6 py-20 md:py-28">
+      <div class="text-center mb-16">
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-white">Forge Your Legend</h2>
+        <p class="mt-3 text-gray-400 max-w-2xl mx-auto">Everything you need to wage war across the shattered realms.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-10 md:gap-8 items-center">
+
+        <!-- Left feature -->
+        <div class="space-y-8 order-2 md:order-1">
+          <div class="text-center md:text-right">
+            <div class="inline-flex md:justify-end mb-3">
+              <span class="rounded-lg border border-warp-purple/40 bg-warp-purple/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-purple-200">Collect &amp; Build</span>
+            </div>
+            <h3 class="font-display text-xl font-bold text-white">50-Card Decks</h3>
+            <p class="mt-2 text-gray-400 leading-relaxed">Collect hundreds of cards across two warring factions and forge razor-tuned 50-card decks. Every choice reshapes the battlefield.</p>
+          </div>
+          <div class="text-center md:text-right">
+            <div class="inline-flex md:justify-end mb-3">
+              <span class="rounded-lg border border-toxic-green/40 bg-toxic-green/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-toxic-green">Live PvP</span>
+            </div>
+            <h3 class="font-display text-xl font-bold text-white">Synchronous Duels</h3>
+            <p class="mt-2 text-gray-400 leading-relaxed">No turns spent waiting. Battle real opponents in live synchronous PvP where reflex and strategy collide in real time.</p>
+          </div>
+        </div>
+
+        <!-- Center: floating card back -->
+        <div class="order-1 md:order-2 flex justify-center">
+          <div class="animate-floaty">
+            <div class="absolute w-64 h-64 -z-10 bg-warp-purple/30 blur-3xl rounded-full mx-auto"></div>
+            <img src="cardback_default.png" alt="Warp Card Back"
+                 class="w-64 h-auto mx-auto shadow-xl hover:scale-105 transition-transform duration-300" />
+          </div>
+        </div>
+
+        <!-- Right feature -->
+        <div class="space-y-8 order-3">
+          <div class="text-center md:text-left">
+            <div class="inline-flex md:justify-start mb-3">
+              <span class="rounded-lg border border-warp-purple/40 bg-warp-purple/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-purple-200">Print-on-Demand</span>
+            </div>
+            <h3 class="font-display text-xl font-bold text-white">Physical Cards Coming</h3>
+            <p class="mt-2 text-gray-400 leading-relaxed">Bring your digital collection into the real world. Print-on-demand physical cards are on the way for collectors and tabletop warlords alike.</p>
+          </div>
+          <div class="text-center md:text-left">
+            <div class="inline-flex md:justify-start mb-3">
+              <span class="rounded-lg border border-toxic-green/40 bg-toxic-green/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-toxic-green">Mobile First</span>
+            </div>
+            <h3 class="font-display text-xl font-bold text-white">Warp Anywhere</h3>
+            <p class="mt-2 text-gray-400 leading-relaxed">Built for mobile from the ground up. Carry the war in your pocket and answer the call to battle wherever you roam.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA STRIP ============ -->
+  <section class="relative z-10">
+    <div class="max-w-4xl mx-auto px-6 pb-24 text-center">
+      <div class="rounded-2xl border border-purple-500/25 bg-gradient-to-b from-warp-purple/10 to-transparent p-10 md:p-14">
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-white">The Warp is calling.</h2>
+        <p class="mt-3 text-gray-400">Secure your place among the first to enter. Join the waitlist above and be summoned at launch.</p>
+        <a href="#waitlist-form"
+           class="mt-7 inline-block rounded-xl border border-toxic-green/50 px-8 py-3 font-display font-bold uppercase tracking-wide text-toxic-green transition-all duration-300 hover:bg-toxic-green hover:text-gunmetal-dark hover:shadow-[0_0_28px_rgba(127,255,42,0.55)]">
+          Join the Waitlist
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="relative z-10 border-t border-purple-500/20 bg-gunmetal-dark/60">
+    <div class="max-w-7xl mx-auto px-6 py-14">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+
+        <div class="text-center md:text-left">
+          <img src="logo.png" alt="WARP: The Card Game" class="max-w-[180px] h-auto mx-auto md:mx-0 mb-4" />
+          <a href="mailto:contact@warptcg.com" class="text-gray-400 hover:text-toxic-green transition-colors">contact@warptcg.com</a>
+        </div>
+
+        <!-- Community buttons -->
+        <div class="flex items-center gap-4">
+          <a href="#" aria-label="Join our Discord"
+             class="inline-flex items-center gap-2 rounded-lg border border-purple-500/40 bg-warp-purple/10 px-4 py-2 text-sm font-semibold text-purple-200 transition-all duration-300 hover:border-warp-purple hover:bg-warp-purple/25 hover:text-white hover:shadow-[0_0_20px_rgba(126,34,206,0.5)]">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M20.317 4.369A19.79 19.79 0 0 0 16.558 3.2a.074.074 0 0 0-.079.037c-.34.607-.719 1.4-.984 2.022a18.27 18.27 0 0 0-5.487 0 12.6 12.6 0 0 0-1-2.022.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C1.222 8.02.559 11.58.885 15.096a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.076.076 0 0 0-.04.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.055c.5-4.06-.838-7.593-2.766-10.7a.06.06 0 0 0-.031-.028ZM8.02 12.955c-1.183 0-2.157-1.086-2.157-2.42 0-1.333.955-2.42 2.157-2.42 1.21 0 2.176 1.096 2.157 2.42 0 1.334-.955 2.42-2.157 2.42Zm7.975 0c-1.183 0-2.157-1.086-2.157-2.42 0-1.333.955-2.42 2.157-2.42 1.21 0 2.176 1.096 2.157 2.42 0 1.334-.946 2.42-2.157 2.42Z"/>
+            </svg>
+            Discord
+          </a>
+          <a href="#" aria-label="Follow us on X"
+             class="inline-flex items-center gap-2 rounded-lg border border-toxic-green/30 bg-toxic-green/5 px-4 py-2 text-sm font-semibold text-toxic-green transition-all duration-300 hover:border-toxic-green hover:bg-toxic-green/15 hover:shadow-[0_0_20px_rgba(127,255,42,0.4)]">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.653l-5.214-6.817-5.966 6.817H1.68l7.73-8.835L1.254 2.25h6.826l4.712 6.231 5.452-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644Z"/>
+            </svg>
+            Follow on X
+          </a>
+        </div>
+      </div>
+
+      <div class="mt-12 pt-8 border-t border-purple-500/15 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+        <div class="flex items-center gap-6">
+          <a href="privacy.html" class="hover:text-gray-300 transition-colors">Privacy</a>
+          <a href="terms.html" class="hover:text-gray-300 transition-colors">Terms</a>
+        </div>
+        <p class="text-center">&copy; 2026 Warp Studios, LLC. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ SCRIPTS ============ -->
+  <script>
+    // PlayFab title configuration
+    PlayFab.settings.titleId = "97955";
+
+    // Generate a cryptographically secure random hex token of `bytes` length.
+    function randomToken(bytes) {
+      const arr = new Uint8Array(bytes);
+      window.crypto.getRandomValues(arr);
+      return Array.from(arr, function (b) {
+        return b.toString(16).padStart(2, "0");
+      }).join("");
+    }
+
+    // Build a PlayFab-valid username (letters/numbers, <=20 chars, unique-ish).
+    function generateUsername() {
+      return ("warp" + randomToken(8)).slice(0, 20);
+    }
+
+    // Build a strong password satisfying complexity (upper, lower, digit, symbol).
+    function generatePassword() {
+      return "Wp!" + randomToken(14); // "Wp!" guarantees upper+lower+symbol; hex adds digits
+    }
+
+    function setMessage(text, tone) {
+      const el = document.getElementById("waitlist-message");
+      el.textContent = text;
+      el.className =
+        "mt-4 min-h-[1.5rem] text-sm font-medium " +
+        (tone === "success"
+          ? "text-toxic-green text-glow-green"
+          : tone === "error"
+          ? "text-red-400"
+          : "text-gray-400");
+    }
+
+    function setLoading(isLoading) {
+      const btn = document.getElementById("waitlist-btn");
+      const label = document.getElementById("waitlist-btn-label");
+      btn.disabled = isLoading;
+      if (isLoading) {
+        label.innerHTML = '<span class="spinner" role="status" aria-label="Submitting"></span>';
+      } else {
+        label.textContent = "Join the Waitlist";
+      }
+    }
+
+    function submitWaitlist(event) {
+      event.preventDefault();
+
+      const email = document.getElementById("waitlist-email").value.trim();
+      if (!email) {
+        setMessage("Please enter a valid email.", "error");
+        return;
+      }
+
+      setLoading(true);
+      setMessage("Summoning your invitation…", "info");
+
+      const request = {
+        TitleId: PlayFab.settings.titleId,
+        Email: email,
+        Username: generateUsername(),
+        Password: generatePassword(),
+        RequireBothUsernameAndEmail: true,
+      };
+
+      PlayFabClientSDK.RegisterPlayFabUser(request, function (result, error) {
+        setLoading(false);
+
+        if (result && result.data) {
+          setMessage("Welcome to the Warp. You are officially on the waitlist.", "success");
+          document.getElementById("waitlist-form").reset();
+          return;
+        }
+
+        // Error handling
+        if (error) {
+          const raw =
+            (error.errorMessage || "") +
+            " " +
+            JSON.stringify(error.errorDetails || {}) +
+            " " +
+            (error.error || "");
+          const haystack = raw.toLowerCase();
+
+          const alreadyExists =
+            error.error === "EmailAddressNotAvailable" ||
+            error.errorCode === 1006 ||
+            haystack.indexOf("email address is not available") !== -1 ||
+            haystack.indexOf("already") !== -1 ||
+            haystack.indexOf("not available") !== -1 ||
+            haystack.indexOf("taken") !== -1;
+
+          if (alreadyExists) {
+            setMessage("You're already on the list.", "success");
+          } else {
+            setMessage(
+              "Something disrupted the Warp: " +
+                (error.errorMessage || "please try again in a moment."),
+              "error"
+            );
+          }
+          return;
+        }
+
+        setMessage("Something went wrong. Please try again.", "error");
+      });
+    }
+  </script>
+</body>
+</html>
