@@ -25,7 +25,7 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <script>
     // Tailwind theme extension — grimdark palette
@@ -44,102 +44,139 @@
             display: ['Cinzel', 'serif'],
             body: ['Inter', 'system-ui', 'sans-serif'],
           },
-          keyframes: {
-            floaty: {
-              '0%, 100%': { transform: 'translateY(0)' },
-              '50%': { transform: 'translateY(-14px)' },
-            },
-            pulseGlow: {
-              '0%, 100%': { boxShadow: '0 0 20px rgba(126,34,206,0.55), 0 0 40px rgba(127,255,42,0.15)' },
-              '50%': { boxShadow: '0 0 34px rgba(126,34,206,0.9), 0 0 70px rgba(127,255,42,0.3)' },
-            },
-          },
-          animation: {
-            floaty: 'floaty 6s ease-in-out infinite',
-            pulseGlow: 'pulseGlow 3s ease-in-out infinite',
-          },
         },
       },
     };
   </script>
 
   <style>
-    body {
-      background-color: #0c0e11;
-      background-image:
-        radial-gradient(ellipse 80% 60% at 15% -10%, rgba(59,7,100,0.55), transparent 60%),
-        radial-gradient(ellipse 70% 50% at 100% 0%, rgba(127,255,42,0.08), transparent 55%),
-        radial-gradient(ellipse 90% 70% at 50% 120%, rgba(126,34,206,0.25), transparent 60%);
-    }
-    .text-glow-green { text-shadow: 0 0 18px rgba(127,255,42,0.5); }
-    .text-glow-purple { text-shadow: 0 0 22px rgba(126,34,206,0.7); }
-    .grain::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-      opacity: 0.04;
+    :root { color-scheme: dark; }
+    html { scroll-behavior: smooth; }
+    body { background-color: #08090c; }
+
+    /* ---------- Animated aurora background ---------- */
+    .aurora { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .aurora .orb { position: absolute; border-radius: 9999px; filter: blur(90px); mix-blend-mode: screen; }
+    .orb-1 { width: 48vw; height: 48vw; top: -12%; left: -8%; opacity: .5;
+      background: radial-gradient(circle, #7e22ce 0%, transparent 62%); animation: drift1 24s ease-in-out infinite; }
+    .orb-2 { width: 42vw; height: 42vw; bottom: -16%; right: -10%; opacity: .28;
+      background: radial-gradient(circle, #7fff2a 0%, transparent 62%); animation: drift2 30s ease-in-out infinite; }
+    .orb-3 { width: 40vw; height: 40vw; top: 38%; left: 34%; opacity: .35;
+      background: radial-gradient(circle, #3b0764 0%, transparent 60%); animation: drift3 34s ease-in-out infinite; }
+    @keyframes drift1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(9%,12%) scale(1.15); } }
+    @keyframes drift2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-10%,-8%) scale(1.2); } }
+    @keyframes drift3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(6%,-10%) scale(.9); } }
+
+    /* Vignette + grain */
+    .vignette { position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background: radial-gradient(ellipse 100% 90% at 50% 40%, transparent 55%, rgba(0,0,0,0.7) 100%); }
+    .grain::after {
+      content: ''; position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0.05;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
+
+    /* Text glows */
+    .text-glow-green { text-shadow: 0 0 20px rgba(127,255,42,0.55); }
+    .text-glow-purple { text-shadow: 0 0 24px rgba(126,34,206,0.75); }
+
+    /* Gradient headline */
+    .grad-text { background: linear-gradient(120deg, #c084fc 0%, #7fff2a 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); }
+    .reveal.is-visible { opacity: 1; transform: none; }
+    .reveal.d1 { transition-delay: .1s; } .reveal.d2 { transition-delay: .2s; } .reveal.d3 { transition-delay: .3s; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; transform: none !important; } .aurora .orb { animation: none; } }
+
+    /* 3D tilt card */
+    .tilt-wrap { perspective: 1200px; }
+    .tilt { transform-style: preserve-3d; transition: transform .25s cubic-bezier(.2,.7,.2,1); will-change: transform; }
+
+    /* Keyword marquee */
+    .marquee { display: flex; overflow: hidden; user-select: none;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+              mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+    .marquee__track { display: flex; flex: 0 0 auto; align-items: center; gap: 2.5rem; padding-right: 2.5rem; min-width: 100%; animation: scrollx 32s linear infinite; }
+    @keyframes scrollx { to { transform: translateX(-100%); } }
+
+    /* Header scrolled state */
+    #site-header { transition: background-color .3s ease, backdrop-filter .3s ease, border-color .3s ease, padding .3s ease; }
+    #site-header.scrolled { background-color: rgba(8,9,12,0.72); backdrop-filter: blur(12px); border-color: rgba(126,34,206,0.25); }
+
+    /* Buttons */
+    .btn-glow { position: relative; }
+    .btn-glow::after { content: ''; position: absolute; inset: -2px; border-radius: inherit; background: linear-gradient(120deg, #7e22ce, #7fff2a); filter: blur(14px); opacity: 0; transition: opacity .3s ease; z-index: -1; }
+    .btn-glow:hover::after { opacity: .55; }
+
     /* Spinner */
-    .spinner {
-      width: 1.25rem;
-      height: 1.25rem;
-      border: 2px solid rgba(0,0,0,0.35);
-      border-top-color: #0c0e11;
-      border-radius: 9999px;
-      animation: spin 0.7s linear infinite;
-    }
+    .spinner { width: 1.25rem; height: 1.25rem; border: 2px solid rgba(0,0,0,0.35); border-top-color: #0c0e11; border-radius: 9999px; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Scroll cue */
+    @keyframes bob { 0%,100% { transform: translateY(0); opacity:.5;} 50% { transform: translateY(8px); opacity:1;} }
+    .scroll-cue { animation: bob 2s ease-in-out infinite; }
   </style>
 </head>
 
 <body class="grain font-body text-gray-200 antialiased selection:bg-toxic-green selection:text-gunmetal-dark overflow-x-hidden">
 
-  <!-- ============ HEADER ============ -->
-  <header class="relative z-10 border-b border-purple-500/20 backdrop-blur-sm">
-    <div class="max-w-7xl mx-auto px-6 pt-10 pb-6">
-      <img src="logo.png" alt="WARP: The Card Game" class="max-w-[300px] h-auto mx-auto mb-6" />
+  <!-- Backgrounds -->
+  <div class="aurora" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="vignette" aria-hidden="true"></div>
 
-      <nav class="flex items-center justify-center gap-4">
-        <!-- Discord -->
-        <a href="#" aria-label="Join our Discord"
-           class="group inline-flex items-center gap-2 rounded-lg border border-purple-500/40 bg-warp-purple/10 px-4 py-2 text-sm font-semibold text-purple-200 transition-all duration-300 hover:border-warp-purple hover:bg-warp-purple/25 hover:text-white hover:shadow-[0_0_20px_rgba(126,34,206,0.5)]">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M20.317 4.369A19.79 19.79 0 0 0 16.558 3.2a.074.074 0 0 0-.079.037c-.34.607-.719 1.4-.984 2.022a18.27 18.27 0 0 0-5.487 0 12.6 12.6 0 0 0-1-2.022.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C1.222 8.02.559 11.58.885 15.096a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.076.076 0 0 0-.04.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.055c.5-4.06-.838-7.593-2.766-10.7a.06.06 0 0 0-.031-.028ZM8.02 12.955c-1.183 0-2.157-1.086-2.157-2.42 0-1.333.955-2.42 2.157-2.42 1.21 0 2.176 1.096 2.157 2.42 0 1.334-.955 2.42-2.157 2.42Zm7.975 0c-1.183 0-2.157-1.086-2.157-2.42 0-1.333.955-2.42 2.157-2.42 1.21 0 2.176 1.096 2.157 2.42 0 1.334-.946 2.42-2.157 2.42Z"/>
-          </svg>
-          Discord
-        </a>
-        <!-- X / Twitter -->
-        <a href="#" aria-label="Follow us on X"
-           class="group inline-flex items-center gap-2 rounded-lg border border-toxic-green/30 bg-toxic-green/5 px-4 py-2 text-sm font-semibold text-toxic-green transition-all duration-300 hover:border-toxic-green hover:bg-toxic-green/15 hover:shadow-[0_0_20px_rgba(127,255,42,0.4)]">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.653l-5.214-6.817-5.966 6.817H1.68l7.73-8.835L1.254 2.25h6.826l4.712 6.231 5.452-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644Z"/>
-          </svg>
-          Follow
-        </a>
+  <!-- ============ STICKY HEADER ============ -->
+  <header id="site-header" class="fixed top-0 inset-x-0 z-50 border-b border-transparent">
+    <div class="max-w-7xl mx-auto px-5 sm:px-6 py-3 flex items-center justify-between gap-4">
+      <a href="#top" class="shrink-0" aria-label="WARP home">
+        <img src="logo.png" alt="WARP: The Card Game" class="h-11 sm:h-12 w-auto" />
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6 lg:gap-7 text-sm font-semibold uppercase tracking-wider text-gray-300">
+        <a href="#factions" class="hover:text-toxic-green transition-colors">Factions</a>
+        <a href="#forge" class="hover:text-toxic-green transition-colors">The Game</a>
+        <a href="#compete" class="hover:text-toxic-green transition-colors">Compete</a>
+        <a href="#marketplace" class="hover:text-toxic-green transition-colors">Marketplace</a>
+        <a href="#waitlist" class="hover:text-toxic-green transition-colors">Waitlist</a>
       </nav>
+
+      <div class="flex items-center gap-2.5">
+        <a href="#" aria-label="Join our Discord"
+           class="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-purple-500/40 bg-warp-purple/10 text-purple-200 transition-all duration-300 hover:border-warp-purple hover:bg-warp-purple/25 hover:text-white hover:shadow-[0_0_18px_rgba(126,34,206,0.5)]">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.369A19.79 19.79 0 0 0 16.558 3.2a.074.074 0 0 0-.079.037c-.34.607-.719 1.4-.984 2.022a18.27 18.27 0 0 0-5.487 0 12.6 12.6 0 0 0-1-2.022.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C1.222 8.02.559 11.58.885 15.096a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.076.076 0 0 0-.04.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.055c.5-4.06-.838-7.593-2.766-10.7a.06.06 0 0 0-.031-.028ZM8.02 12.955c-1.183 0-2.157-1.086-2.157-2.42 0-1.333.955-2.42 2.157-2.42 1.21 0 2.176 1.096 2.157 2.42 0 1.334-.955 2.42-2.157 2.42Zm7.975 0c-1.183 0-2.157-1.086-2.157-2.42 0-1.333.955-2.42 2.157-2.42 1.21 0 2.176 1.096 2.157 2.42 0 1.334-.946 2.42-2.157 2.42Z"/></svg>
+        </a>
+        <a href="#" aria-label="Follow us on X"
+           class="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-toxic-green/30 bg-toxic-green/5 text-toxic-green transition-all duration-300 hover:border-toxic-green hover:bg-toxic-green/15 hover:shadow-[0_0_18px_rgba(127,255,42,0.4)]">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.653l-5.214-6.817-5.966 6.817H1.68l7.73-8.835L1.254 2.25h6.826l4.712 6.231 5.452-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644Z"/></svg>
+        </a>
+        <a href="#waitlist" class="hidden sm:inline-flex items-center rounded-lg bg-toxic-green px-4 py-2.5 text-sm font-display font-bold uppercase tracking-wide text-gunmetal-dark transition-all duration-300 hover:bg-toxic-green-dim hover:shadow-[0_0_20px_rgba(127,255,42,0.55)]">
+          Join
+        </a>
+      </div>
     </div>
   </header>
 
   <!-- ============ HERO ============ -->
-  <section class="relative z-10">
-    <div class="max-w-7xl mx-auto px-6 py-16 md:py-24">
+  <section id="top" class="relative z-10 min-h-screen flex items-center pt-28 pb-16">
+    <div class="max-w-7xl mx-auto px-6 w-full">
       <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
         <!-- Left: Copy + Form -->
         <div class="text-center lg:text-left">
-          <p class="inline-block mb-5 rounded-full border border-toxic-green/40 bg-toxic-green/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-toxic-green">
+          <p class="reveal inline-flex items-center gap-2 mb-6 rounded-full border border-toxic-green/40 bg-toxic-green/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-toxic-green">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-toxic-green animate-pulse"></span>
             Grimdark Fantasy TCG · Mobile
           </p>
 
-          <h1 class="font-display text-4xl sm:text-5xl xl:text-6xl font-black leading-[1.05] text-white">
+          <h1 class="reveal d1 font-display text-5xl sm:text-6xl xl:text-7xl font-black leading-[1.02] text-white">
             REALMS <span class="text-warp-purple text-glow-purple">COLLIDE.</span><br />
             POWER <span class="text-toxic-green text-glow-green">CONSUMES.</span>
           </h1>
 
-          <p class="mt-6 text-lg text-gray-300/90 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+          <p class="reveal d2 mt-7 text-lg text-gray-300/90 max-w-xl mx-auto lg:mx-0 leading-relaxed">
             Two warring factions tear at the seams of a dying world. Command corrupted
             legions and radiant zealots alike in <span class="text-white font-semibold">WARP: The Card Game</span> —
             a grimdark fantasy TCG built for the palm of your hand. Build ruthless decks,
@@ -147,54 +184,132 @@
           </p>
 
           <!-- Waitlist form -->
-          <form id="waitlist-form" onsubmit="submitWaitlist(event)"
-                class="mt-9 max-w-md mx-auto lg:mx-0">
-            <div class="flex flex-col sm:flex-row gap-3 p-2 rounded-2xl border border-purple-500/30 bg-gunmetal/60 backdrop-blur animate-pulseGlow">
-              <input id="waitlist-email" type="email" name="email" required
-                     autocomplete="email" placeholder="your@email.com"
+          <form id="waitlist-form" onsubmit="submitWaitlist(event)" class="reveal d3 mt-9 max-w-md mx-auto lg:mx-0">
+            <div class="flex flex-col sm:flex-row gap-3 p-2 rounded-2xl border border-purple-500/30 bg-gunmetal/60 backdrop-blur">
+              <input id="waitlist-email" type="email" name="email" required autocomplete="email" placeholder="your@email.com"
                      class="flex-1 bg-transparent px-4 py-3 text-white placeholder-gray-500 focus:outline-none" />
               <button id="waitlist-btn" type="submit"
-                      class="inline-flex items-center justify-center gap-2 min-w-[168px] rounded-xl bg-toxic-green px-6 py-3 font-display font-bold uppercase tracking-wide text-gunmetal-dark transition-all duration-300 hover:bg-toxic-green-dim hover:shadow-[0_0_28px_rgba(127,255,42,0.6)] disabled:opacity-70 disabled:cursor-not-allowed">
+                      class="btn-glow inline-flex items-center justify-center gap-2 min-w-[168px] rounded-xl bg-toxic-green px-6 py-3 font-display font-bold uppercase tracking-wide text-gunmetal-dark transition-all duration-300 hover:bg-toxic-green-dim">
                 <span id="waitlist-btn-label">Join the Waitlist</span>
               </button>
             </div>
             <p id="waitlist-message" role="status" aria-live="polite" class="mt-4 min-h-[1.5rem] text-sm font-medium"></p>
           </form>
 
-          <p class="mt-2 text-xs text-gray-500">No spam. Just Warp. Unsubscribe anytime.</p>
+          <p class="reveal d3 mt-2 text-xs text-gray-500">No spam. Just Warp. Unsubscribe anytime.</p>
         </div>
 
         <!-- Right: Hero art -->
-        <div class="relative">
-          <div class="absolute -inset-4 bg-gradient-to-tr from-warp-purple/30 via-transparent to-toxic-green/20 blur-2xl rounded-3xl"></div>
-          <img src="hero_banner.png" alt="Warp TCG Key Art"
-               class="relative rounded-xl shadow-2xl border border-purple-500/30" />
+        <div class="reveal d2 relative">
+          <div class="absolute -inset-6 bg-gradient-to-tr from-warp-purple/40 via-transparent to-toxic-green/25 blur-3xl rounded-[2rem]"></div>
+          <div class="relative rounded-xl overflow-hidden border border-purple-500/30 shadow-2xl">
+            <img src="hero_banner.png" alt="Warp TCG Key Art" class="w-full h-auto" />
+            <div class="absolute inset-0 pointer-events-none ring-1 ring-inset ring-white/5 rounded-xl"></div>
+          </div>
         </div>
 
       </div>
     </div>
+
+    <!-- Scroll cue -->
+    <a href="#marquee" aria-label="Scroll down" class="scroll-cue absolute bottom-6 left-1/2 -translate-x-1/2 text-gray-500 hover:text-toxic-green transition-colors">
+      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
   </section>
 
-  <!-- ============ FEATURES / ART ============ -->
-  <section class="relative z-10 border-t border-purple-500/15">
-    <div class="max-w-7xl mx-auto px-6 py-20 md:py-28">
+  <!-- ============ KEYWORD MARQUEE ============ -->
+  <div id="marquee" class="relative z-10 border-y border-purple-500/15 bg-gunmetal-dark/40 py-4">
+    <div class="marquee">
+      <div class="marquee__track font-display text-sm font-semibold uppercase tracking-[0.28em] text-gray-500">
+        <span>Realms Collide</span><span class="text-toxic-green/60">✦</span>
+        <span>Power Consumes</span><span class="text-warp-purple/70">✦</span>
+        <span>Live Synchronous PvP</span><span class="text-toxic-green/60">✦</span>
+        <span>50-Card Decks</span><span class="text-warp-purple/70">✦</span>
+        <span>Two Warring Factions</span><span class="text-toxic-green/60">✦</span>
+        <span>Ranked Leaderboards</span><span class="text-warp-purple/70">✦</span>
+        <span>Guild Wars</span><span class="text-toxic-green/60">✦</span>
+        <span>Live Marketplace</span><span class="text-warp-purple/70">✦</span>
+        <span>Print-on-Demand</span><span class="text-toxic-green/60">✦</span>
+      </div>
+      <div class="marquee__track font-display text-sm font-semibold uppercase tracking-[0.28em] text-gray-500" aria-hidden="true">
+        <span>Realms Collide</span><span class="text-toxic-green/60">✦</span>
+        <span>Power Consumes</span><span class="text-warp-purple/70">✦</span>
+        <span>Live Synchronous PvP</span><span class="text-toxic-green/60">✦</span>
+        <span>50-Card Decks</span><span class="text-warp-purple/70">✦</span>
+        <span>Two Warring Factions</span><span class="text-toxic-green/60">✦</span>
+        <span>Ranked Leaderboards</span><span class="text-warp-purple/70">✦</span>
+        <span>Guild Wars</span><span class="text-toxic-green/60">✦</span>
+        <span>Live Marketplace</span><span class="text-warp-purple/70">✦</span>
+        <span>Print-on-Demand</span><span class="text-toxic-green/60">✦</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FACTIONS ============ -->
+  <!-- NOTE: Faction names below are evocative placeholders — swap for your canon. -->
+  <section id="factions" class="relative z-10">
+    <div class="max-w-7xl mx-auto px-6 py-24 md:py-32">
       <div class="text-center mb-16">
-        <h2 class="font-display text-3xl md:text-4xl font-bold text-white">Forge Your Legend</h2>
-        <p class="mt-3 text-gray-400 max-w-2xl mx-auto">Everything you need to wage war across the shattered realms.</p>
+        <p class="reveal inline-block mb-4 rounded-full border border-purple-500/40 bg-warp-purple/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-purple-200">Choose Your Side</p>
+        <h2 class="reveal d1 font-display text-4xl md:text-5xl font-bold text-white">Two Warring Factions</h2>
+        <p class="reveal d2 mt-4 text-gray-400 max-w-2xl mx-auto">The Warp fractured the world in two. Only one truth survives the collision — the one you fight for.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Faction A -->
+        <article class="reveal group relative overflow-hidden rounded-2xl border border-purple-500/30 bg-gradient-to-b from-warp-purple/15 to-transparent p-8 md:p-10 transition-all duration-500 hover:border-warp-purple/70 hover:shadow-[0_0_40px_rgba(126,34,206,0.25)]">
+          <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-warp-purple/20 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-60"></div>
+          <div class="relative">
+            <span class="text-xs font-semibold uppercase tracking-[0.25em] text-purple-300/80">The Void-Touched</span>
+            <h3 class="mt-2 font-display text-3xl font-bold text-white">The Voidsworn</h3>
+            <p class="mt-4 text-gray-300/90 leading-relaxed">Those who gazed into the Warp and let it in. They wield corruption as a blade — sacrificing flesh and sanity for power no mortal was meant to hold.</p>
+            <ul class="mt-6 space-y-2 text-sm text-gray-400">
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-warp-purple"></span> Aggressive attrition &amp; sacrifice</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-warp-purple"></span> Corruption stacks that snowball</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-warp-purple"></span> High-risk, world-ending payoffs</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- Faction B -->
+        <article class="reveal d1 group relative overflow-hidden rounded-2xl border border-toxic-green/30 bg-gradient-to-b from-toxic-green/10 to-transparent p-8 md:p-10 transition-all duration-500 hover:border-toxic-green/70 hover:shadow-[0_0_40px_rgba(127,255,42,0.2)]">
+          <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-toxic-green/15 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-60"></div>
+          <div class="relative">
+            <span class="text-xs font-semibold uppercase tracking-[0.25em] text-toxic-green/80">The Last Light</span>
+            <h3 class="mt-2 font-display text-3xl font-bold text-white">The Verdant Oath</h3>
+            <p class="mt-4 text-gray-300/90 leading-relaxed">Zealots of a dying green — radiant, relentless, and righteous. They burn their own reserves to hold the line, turning desperation into overwhelming force.</p>
+            <ul class="mt-6 space-y-2 text-sm text-gray-400">
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-toxic-green"></span> Resilient control &amp; recovery</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-toxic-green"></span> Synergy engines that compound</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-toxic-green"></span> Late-game inevitability</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FORGE YOUR LEGEND (cardback) ============ -->
+  <section id="forge" class="relative z-10 border-t border-purple-500/15">
+    <div class="max-w-7xl mx-auto px-6 py-24 md:py-32">
+      <div class="text-center mb-16">
+        <p class="reveal inline-block mb-4 rounded-full border border-toxic-green/40 bg-toxic-green/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-toxic-green">The Game</p>
+        <h2 class="reveal d1 font-display text-4xl md:text-5xl font-bold text-white">Forge Your Legend</h2>
+        <p class="reveal d2 mt-3 text-gray-400 max-w-2xl mx-auto">Everything you need to wage war across the shattered realms.</p>
       </div>
 
       <div class="grid md:grid-cols-3 gap-10 md:gap-8 items-center">
 
         <!-- Left feature -->
         <div class="space-y-8 order-2 md:order-1">
-          <div class="text-center md:text-right">
+          <div class="reveal text-center md:text-right">
             <div class="inline-flex md:justify-end mb-3">
               <span class="rounded-lg border border-warp-purple/40 bg-warp-purple/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-purple-200">Collect &amp; Build</span>
             </div>
             <h3 class="font-display text-xl font-bold text-white">50-Card Decks</h3>
             <p class="mt-2 text-gray-400 leading-relaxed">Collect hundreds of cards across two warring factions and forge razor-tuned 50-card decks. Every choice reshapes the battlefield.</p>
           </div>
-          <div class="text-center md:text-right">
+          <div class="reveal d1 text-center md:text-right">
             <div class="inline-flex md:justify-end mb-3">
               <span class="rounded-lg border border-toxic-green/40 bg-toxic-green/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-toxic-green">Live PvP</span>
             </div>
@@ -203,25 +318,27 @@
           </div>
         </div>
 
-        <!-- Center: floating card back -->
+        <!-- Center: floating card back with 3D tilt -->
         <div class="order-1 md:order-2 flex justify-center">
-          <div class="animate-floaty">
-            <div class="absolute w-64 h-64 -z-10 bg-warp-purple/30 blur-3xl rounded-full mx-auto"></div>
-            <img src="cardback_default.png" alt="Warp Card Back"
-                 class="w-64 h-auto mx-auto shadow-xl hover:scale-105 transition-transform duration-300" />
+          <div class="tilt-wrap">
+            <div id="tilt-card" class="tilt relative">
+              <div class="absolute inset-0 -z-10 bg-warp-purple/30 blur-3xl rounded-full scale-90"></div>
+              <img src="cardback_default.png" alt="Warp Card Back"
+                   class="w-64 h-auto mx-auto shadow-xl drop-shadow-[0_20px_35px_rgba(126,34,206,0.35)]" />
+            </div>
           </div>
         </div>
 
         <!-- Right feature -->
         <div class="space-y-8 order-3">
-          <div class="text-center md:text-left">
+          <div class="reveal text-center md:text-left">
             <div class="inline-flex md:justify-start mb-3">
               <span class="rounded-lg border border-warp-purple/40 bg-warp-purple/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-purple-200">Print-on-Demand</span>
             </div>
             <h3 class="font-display text-xl font-bold text-white">Physical Cards Coming</h3>
             <p class="mt-2 text-gray-400 leading-relaxed">Bring your digital collection into the real world. Print-on-demand physical cards are on the way for collectors and tabletop warlords alike.</p>
           </div>
-          <div class="text-center md:text-left">
+          <div class="reveal d1 text-center md:text-left">
             <div class="inline-flex md:justify-start mb-3">
               <span class="rounded-lg border border-toxic-green/40 bg-toxic-green/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-toxic-green">Mobile First</span>
             </div>
@@ -234,44 +351,227 @@
     </div>
   </section>
 
-  <!-- ============ CTA STRIP ============ -->
-  <section class="relative z-10">
-    <div class="max-w-4xl mx-auto px-6 pb-24 text-center">
-      <div class="rounded-2xl border border-purple-500/25 bg-gradient-to-b from-warp-purple/10 to-transparent p-10 md:p-14">
-        <h2 class="font-display text-3xl md:text-4xl font-bold text-white">The Warp is calling.</h2>
-        <p class="mt-3 text-gray-400">Secure your place among the first to enter. Join the waitlist above and be summoned at launch.</p>
-        <a href="#waitlist-form"
-           class="mt-7 inline-block rounded-xl border border-toxic-green/50 px-8 py-3 font-display font-bold uppercase tracking-wide text-toxic-green transition-all duration-300 hover:bg-toxic-green hover:text-gunmetal-dark hover:shadow-[0_0_28px_rgba(127,255,42,0.55)]">
-          Join the Waitlist
-        </a>
+  <!-- ============ COMPETE: RANKED / GUILD WARS / MARKETPLACE ============ -->
+  <section id="compete" class="relative z-10 border-t border-purple-500/15">
+    <div class="max-w-7xl mx-auto px-6 py-24 md:py-32">
+      <div class="text-center mb-16">
+        <p class="reveal inline-block mb-4 rounded-full border border-toxic-green/40 bg-toxic-green/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-toxic-green">The Endgame</p>
+        <h2 class="reveal d1 font-display text-4xl md:text-5xl font-bold text-white">Compete. Conquer. <span class="grad-text">Trade.</span></h2>
+        <p class="reveal d2 mt-4 text-gray-400 max-w-2xl mx-auto">The war doesn't end at the duel. Climb the global ladder, wage war with your guild, and command a living, real-time economy.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- Ranked Leaderboards -->
+        <article class="reveal group relative overflow-hidden rounded-2xl border border-purple-500/25 bg-gunmetal/40 p-8 transition-all duration-300 hover:-translate-y-1.5 hover:border-warp-purple/70 hover:shadow-[0_0_36px_rgba(126,34,206,0.25)]">
+          <div class="absolute -top-20 -right-20 w-52 h-52 rounded-full bg-warp-purple/20 blur-3xl opacity-70"></div>
+          <div class="relative">
+            <div class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-warp-purple/40 bg-warp-purple/10 text-toxic-green">
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></svg>
+            </div>
+            <h3 class="font-display text-2xl font-bold text-white">Ranked Leaderboards</h3>
+            <p class="mt-3 text-gray-400 leading-relaxed">Climb a global, seasonal ranked ladder. Earn your rank duel by duel, chase the top spots, and prove you're the last warlord standing.</p>
+            <ul class="mt-5 space-y-2 text-sm text-gray-400">
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-warp-purple"></span> Seasonal ranks &amp; rewards</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-warp-purple"></span> Global &amp; regional ladders</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-warp-purple"></span> Skill-based matchmaking</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- Guild Wars -->
+        <article class="reveal d1 group relative overflow-hidden rounded-2xl border border-toxic-green/25 bg-gunmetal/40 p-8 transition-all duration-300 hover:-translate-y-1.5 hover:border-toxic-green/70 hover:shadow-[0_0_36px_rgba(127,255,42,0.2)]">
+          <div class="absolute -top-20 -right-20 w-52 h-52 rounded-full bg-toxic-green/15 blur-3xl opacity-70"></div>
+          <div class="relative">
+            <div class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-toxic-green/40 bg-toxic-green/10 text-toxic-green">
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18"/><path d="M6 4h11l-2.5 3.5L17 11H6"/></svg>
+            </div>
+            <h3 class="font-display text-2xl font-bold text-white">Guild Wars</h3>
+            <p class="mt-3 text-gray-400 leading-relaxed">Band together into guilds and wage ranked Guild Wars. Battle rival guilds for territory and glory, and climb the guild ladder together.</p>
+            <ul class="mt-5 space-y-2 text-sm text-gray-400">
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-toxic-green"></span> Form &amp; lead your guild</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-toxic-green"></span> Ranked guild ladders</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-toxic-green"></span> Weekly war seasons</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- Live Marketplace -->
+        <article class="reveal d2 group relative overflow-hidden rounded-2xl border border-purple-500/25 bg-gunmetal/40 p-8 transition-all duration-300 hover:-translate-y-1.5 hover:border-warp-purple/70 hover:shadow-[0_0_36px_rgba(126,34,206,0.25)]">
+          <div class="absolute -top-20 -right-20 w-52 h-52 rounded-full bg-warp-purple/20 blur-3xl opacity-70"></div>
+          <div class="relative">
+            <div class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-warp-purple/40 bg-warp-purple/10 text-toxic-green">
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13M13 4l4 4-4 4"/><path d="M20 16H7M11 20l-4-4 4-4"/></svg>
+            </div>
+            <h3 class="font-display text-2xl font-bold text-white">Live Marketplace</h3>
+            <p class="mt-3 text-gray-400 leading-relaxed">A real-time, player-driven economy. Buy and sell cards directly with other players as prices move live with supply and demand.</p>
+            <ul class="mt-5 space-y-2 text-sm text-gray-400">
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-warp-purple"></span> Real-time buy &amp; sell</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-warp-purple"></span> Direct player-to-player trades</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-warp-purple"></span> A living card economy</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MARKETPLACE HIGHLIGHT BAND ============ -->
+  <section id="marketplace" class="relative z-10">
+    <div class="max-w-7xl mx-auto px-6 pb-24">
+      <div class="reveal relative overflow-hidden rounded-3xl border border-toxic-green/25 bg-gradient-to-br from-toxic-green/10 via-transparent to-warp-purple/15 p-8 md:p-14">
+        <div class="absolute -top-24 -left-16 w-80 h-80 rounded-full bg-toxic-green/10 blur-3xl"></div>
+        <div class="relative grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          <div>
+            <p class="inline-block mb-4 rounded-full border border-toxic-green/40 bg-toxic-green/5 px-4 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-toxic-green">Live Economy</p>
+            <h2 class="font-display text-3xl md:text-4xl font-bold text-white">A Real-Time Card Marketplace</h2>
+            <p class="mt-4 text-gray-300/90 leading-relaxed">Every card you own is an asset. Trade on an open, real-time marketplace where you buy and sell directly with other players — prices set by the community, not the house. Corner the meta, flip rare pulls, or fund your next deck.</p>
+            <div class="mt-6 flex flex-wrap gap-2.5">
+              <span class="rounded-lg border border-toxic-green/30 bg-toxic-green/5 px-3 py-1.5 text-xs font-semibold text-toxic-green">Real-time pricing</span>
+              <span class="rounded-lg border border-purple-500/30 bg-warp-purple/10 px-3 py-1.5 text-xs font-semibold text-purple-200">Player-to-player</span>
+              <span class="rounded-lg border border-toxic-green/30 bg-toxic-green/5 px-3 py-1.5 text-xs font-semibold text-toxic-green">Buy &amp; sell instantly</span>
+            </div>
+          </div>
+
+          <!-- Stylized live market ticker -->
+          <div class="rounded-2xl border border-purple-500/25 bg-gunmetal-dark/70 backdrop-blur p-5 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-purple-500/15">
+              <div class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-toxic-green animate-pulse"></span>
+                <span class="text-xs font-semibold uppercase tracking-widest text-gray-400">Market · Live</span>
+              </div>
+              <span class="text-xs uppercase tracking-widest text-gray-600">Price ◈</span>
+            </div>
+            <div class="divide-y divide-purple-500/10 text-sm">
+              <div class="flex items-center justify-between py-3">
+                <span class="font-medium text-gray-200">Voidmaw Reaver</span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">1,240</span><span class="text-toxic-green text-xs font-semibold">▲ 12%</span></span>
+              </div>
+              <div class="flex items-center justify-between py-3">
+                <span class="font-medium text-gray-200">Verdant Warden</span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">880</span><span class="text-red-400 text-xs font-semibold">▼ 4%</span></span>
+              </div>
+              <div class="flex items-center justify-between py-3">
+                <span class="font-medium text-gray-200">Warp Sigil <span class="text-purple-300/70 text-xs">· Mythic</span></span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">3,410</span><span class="text-toxic-green text-xs font-semibold">▲ 28%</span></span>
+              </div>
+              <div class="flex items-center justify-between py-3">
+                <span class="font-medium text-gray-200">Ashen Acolyte</span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">210</span><span class="text-toxic-green text-xs font-semibold">▲ 3%</span></span>
+              </div>
+            </div>
+            <p class="pt-3 text-[11px] text-gray-600">Illustrative prices — the real market is set live by players.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES GRID ============ -->
+  <section id="features" class="relative z-10 border-t border-purple-500/15">
+    <div class="max-w-7xl mx-auto px-6 py-24 md:py-28">
+      <div class="text-center mb-16">
+        <h2 class="reveal font-display text-4xl md:text-5xl font-bold text-white">Built for Warlords</h2>
+        <p class="reveal d1 mt-3 text-gray-400 max-w-2xl mx-auto">A competitive TCG engineered for depth, speed, and spectacle.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- card -->
+        <div class="reveal group rounded-2xl border border-purple-500/20 bg-gunmetal/40 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-warp-purple/60 hover:shadow-[0_0_30px_rgba(126,34,206,0.2)]">
+          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-warp-purple/40 bg-warp-purple/10 text-toxic-green">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="12" height="16" rx="2"/><path d="M9 8h2M9 12h2"/><path d="M17 7l4 1v10l-6 2V6l2 1z"/></svg>
+          </div>
+          <h3 class="font-display text-lg font-bold text-white">Deep Deckbuilding</h3>
+          <p class="mt-2 text-sm text-gray-400 leading-relaxed">Hundreds of cards, two factions, and 50-card decks with room for real theorycrafting.</p>
+        </div>
+        <div class="reveal d1 group rounded-2xl border border-purple-500/20 bg-gunmetal/40 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-toxic-green/60 hover:shadow-[0_0_30px_rgba(127,255,42,0.18)]">
+          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-toxic-green/40 bg-toxic-green/10 text-toxic-green">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L4.5 13H11l-1 9 8.5-12H12l1-8z"/></svg>
+          </div>
+          <h3 class="font-display text-lg font-bold text-white">Real-Time Duels</h3>
+          <p class="mt-2 text-sm text-gray-400 leading-relaxed">Live synchronous PvP — no async stalling. Outplay opponents move for move.</p>
+        </div>
+        <div class="reveal d2 group rounded-2xl border border-purple-500/20 bg-gunmetal/40 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-warp-purple/60 hover:shadow-[0_0_30px_rgba(126,34,206,0.2)]">
+          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-warp-purple/40 bg-warp-purple/10 text-toxic-green">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg>
+          </div>
+          <h3 class="font-display text-lg font-bold text-white">Print on Demand</h3>
+          <p class="mt-2 text-sm text-gray-400 leading-relaxed">Turn your digital collection into physical cards — coming after launch.</p>
+        </div>
+        <div class="reveal d3 group rounded-2xl border border-purple-500/20 bg-gunmetal/40 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-toxic-green/60 hover:shadow-[0_0_30px_rgba(127,255,42,0.18)]">
+          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-toxic-green/40 bg-toxic-green/10 text-toxic-green">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
+          </div>
+          <h3 class="font-display text-lg font-bold text-white">Mobile Native</h3>
+          <p class="mt-2 text-sm text-gray-400 leading-relaxed">Designed for touch from day one. The whole war fits in your pocket.</p>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 rounded-2xl border border-purple-500/20 bg-gunmetal-dark/50 p-8">
+        <div class="reveal text-center">
+          <div class="font-display text-4xl font-black text-white"><span data-count="2">0</span></div>
+          <div class="mt-1 text-xs uppercase tracking-widest text-gray-500">Warring Factions</div>
+        </div>
+        <div class="reveal d1 text-center">
+          <div class="font-display text-4xl font-black text-white"><span data-count="200">0</span><span class="text-toxic-green">+</span></div>
+          <div class="mt-1 text-xs uppercase tracking-widest text-gray-500">Collectible Cards</div>
+        </div>
+        <div class="reveal d2 text-center">
+          <div class="font-display text-4xl font-black text-white"><span data-count="50">0</span></div>
+          <div class="mt-1 text-xs uppercase tracking-widest text-gray-500">Cards Per Deck</div>
+        </div>
+        <div class="reveal d3 text-center">
+          <div class="font-display text-4xl font-black text-toxic-green text-glow-green">Live</div>
+          <div class="mt-1 text-xs uppercase tracking-widest text-gray-500">Real-Time PvP</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section id="waitlist" class="relative z-10">
+    <div class="max-w-4xl mx-auto px-6 py-24 text-center">
+      <div class="reveal relative overflow-hidden rounded-3xl border border-purple-500/25 bg-gradient-to-b from-warp-purple/15 to-transparent p-10 md:p-16">
+        <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-toxic-green/10 blur-3xl"></div>
+        <div class="relative">
+          <h2 class="font-display text-4xl md:text-5xl font-bold text-white">The Warp is <span class="grad-text">calling.</span></h2>
+          <p class="mt-4 text-gray-300/90 max-w-xl mx-auto">Secure your place among the first to enter. Join the waitlist and be summoned the moment the realms collide.</p>
+
+          <form onsubmit="submitWaitlist(event)" class="mt-8 max-w-md mx-auto">
+            <div class="flex flex-col sm:flex-row gap-3 p-2 rounded-2xl border border-toxic-green/30 bg-gunmetal/60 backdrop-blur">
+              <input type="email" name="email" required autocomplete="email" placeholder="your@email.com"
+                     oninput="document.getElementById('waitlist-email').value = this.value"
+                     class="flex-1 bg-transparent px-4 py-3 text-white placeholder-gray-500 focus:outline-none" />
+              <button type="submit"
+                      class="btn-glow inline-flex items-center justify-center min-w-[168px] rounded-xl bg-toxic-green px-6 py-3 font-display font-bold uppercase tracking-wide text-gunmetal-dark transition-all duration-300 hover:bg-toxic-green-dim">
+                Join the Waitlist
+              </button>
+            </div>
+          </form>
+          <p class="mt-3 text-xs text-gray-500">Free to join. No spam, ever.</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ============ FOOTER ============ -->
-  <footer class="relative z-10 border-t border-purple-500/20 bg-gunmetal-dark/60">
+  <footer class="relative z-10 border-t border-purple-500/20 bg-gunmetal-dark/70">
     <div class="max-w-7xl mx-auto px-6 py-14">
       <div class="flex flex-col md:flex-row items-center justify-between gap-8">
-
         <div class="text-center md:text-left">
           <img src="logo.png" alt="WARP: The Card Game" class="max-w-[180px] h-auto mx-auto md:mx-0 mb-4" />
           <a href="mailto:contact@warptcg.com" class="text-gray-400 hover:text-toxic-green transition-colors">contact@warptcg.com</a>
         </div>
 
-        <!-- Community buttons -->
         <div class="flex items-center gap-4">
           <a href="#" aria-label="Join our Discord"
              class="inline-flex items-center gap-2 rounded-lg border border-purple-500/40 bg-warp-purple/10 px-4 py-2 text-sm font-semibold text-purple-200 transition-all duration-300 hover:border-warp-purple hover:bg-warp-purple/25 hover:text-white hover:shadow-[0_0_20px_rgba(126,34,206,0.5)]">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M20.317 4.369A19.79 19.79 0 0 0 16.558 3.2a.074.074 0 0 0-.079.037c-.34.607-.719 1.4-.984 2.022a18.27 18.27 0 0 0-5.487 0 12.6 12.6 0 0 0-1-2.022.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C1.222 8.02.559 11.58.885 15.096a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.076.076 0 0 0-.04.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.055c.5-4.06-.838-7.593-2.766-10.7a.06.06 0 0 0-.031-.028ZM8.02 12.955c-1.183 0-2.157-1.086-2.157-2.42 0-1.333.955-2.42 2.157-2.42 1.21 0 2.176 1.096 2.157 2.42 0 1.334-.955 2.42-2.157 2.42Zm7.975 0c-1.183 0-2.157-1.086-2.157-2.42 0-1.333.955-2.42 2.157-2.42 1.21 0 2.176 1.096 2.157 2.42 0 1.334-.946 2.42-2.157 2.42Z"/>
-            </svg>
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.369A19.79 19.79 0 0 0 16.558 3.2a.074.074 0 0 0-.079.037c-.34.607-.719 1.4-.984 2.022a18.27 18.27 0 0 0-5.487 0 12.6 12.6 0 0 0-1-2.022.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C1.222 8.02.559 11.58.885 15.096a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.076.076 0 0 0-.04.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.029 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.055c.5-4.06-.838-7.593-2.766-10.7a.06.06 0 0 0-.031-.028ZM8.02 12.955c-1.183 0-2.157-1.086-2.157-2.42 0-1.333.955-2.42 2.157-2.42 1.21 0 2.176 1.096 2.157 2.42 0 1.334-.955 2.42-2.157 2.42Zm7.975 0c-1.183 0-2.157-1.086-2.157-2.42 0-1.333.955-2.42 2.157-2.42 1.21 0 2.176 1.096 2.157 2.42 0 1.334-.946 2.42-2.157 2.42Z"/></svg>
             Discord
           </a>
           <a href="#" aria-label="Follow us on X"
              class="inline-flex items-center gap-2 rounded-lg border border-toxic-green/30 bg-toxic-green/5 px-4 py-2 text-sm font-semibold text-toxic-green transition-all duration-300 hover:border-toxic-green hover:bg-toxic-green/15 hover:shadow-[0_0_20px_rgba(127,255,42,0.4)]">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.653l-5.214-6.817-5.966 6.817H1.68l7.73-8.835L1.254 2.25h6.826l4.712 6.231 5.452-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644Z"/>
-            </svg>
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.653l-5.214-6.817-5.966 6.817H1.68l7.73-8.835L1.254 2.25h6.826l4.712 6.231 5.452-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644Z"/></svg>
             Follow on X
           </a>
         </div>
@@ -313,6 +613,7 @@
 
     function setMessage(text, tone) {
       const el = document.getElementById("waitlist-message");
+      if (!el) return;
       el.textContent = text;
       el.className =
         "mt-4 min-h-[1.5rem] text-sm font-medium " +
@@ -326,6 +627,7 @@
     function setLoading(isLoading) {
       const btn = document.getElementById("waitlist-btn");
       const label = document.getElementById("waitlist-btn-label");
+      if (!btn || !label) return;
       btn.disabled = isLoading;
       if (isLoading) {
         label.innerHTML = '<span class="spinner" role="status" aria-label="Submitting"></span>';
@@ -337,7 +639,10 @@
     function submitWaitlist(event) {
       event.preventDefault();
 
-      const email = document.getElementById("waitlist-email").value.trim();
+      // Prefer the value from whichever form was submitted, fall back to hero input.
+      var submitted = event.target && event.target.querySelector('input[type="email"]');
+      var email = ((submitted && submitted.value) ||
+        (document.getElementById("waitlist-email") || {}).value || "").trim();
       if (!email) {
         setMessage("Please enter a valid email.", "error");
         return;
@@ -359,7 +664,9 @@
 
         if (result && result.data) {
           setMessage("Welcome to the Warp. You are officially on the waitlist.", "success");
-          document.getElementById("waitlist-form").reset();
+          var f = document.getElementById("waitlist-form");
+          if (f) f.reset();
+          if (event.target && event.target.reset && event.target !== f) event.target.reset();
           return;
         }
 
@@ -396,6 +703,72 @@
         setMessage("Something went wrong. Please try again.", "error");
       });
     }
+
+    /* ---------- UI polish (non-critical, progressive enhancement) ---------- */
+    (function () {
+      // Sticky header background on scroll
+      var header = document.getElementById("site-header");
+      function onScroll() {
+        if (!header) return;
+        if (window.scrollY > 24) header.classList.add("scrolled");
+        else header.classList.remove("scrolled");
+      }
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+
+      // Scroll-reveal via IntersectionObserver
+      var reveals = document.querySelectorAll(".reveal");
+      if ("IntersectionObserver" in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add("is-visible"); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
+        reveals.forEach(function (el) { io.observe(el); });
+      } else {
+        reveals.forEach(function (el) { el.classList.add("is-visible"); });
+      }
+
+      // 3D tilt on card back
+      var wrap = document.querySelector(".tilt-wrap");
+      var card = document.getElementById("tilt-card");
+      if (wrap && card && window.matchMedia("(pointer:fine)").matches) {
+        wrap.addEventListener("mousemove", function (ev) {
+          var r = wrap.getBoundingClientRect();
+          var px = (ev.clientX - r.left) / r.width - 0.5;
+          var py = (ev.clientY - r.top) / r.height - 0.5;
+          card.style.transform = "rotateY(" + (px * 16) + "deg) rotateX(" + (-py * 16) + "deg) scale(1.05)";
+        });
+        wrap.addEventListener("mouseleave", function () {
+          card.style.transform = "rotateY(0) rotateX(0) scale(1)";
+        });
+      }
+
+      // Count-up stats when visible
+      function animateCount(el) {
+        var target = parseInt(el.getAttribute("data-count"), 10) || 0;
+        var start = null, dur = 1400;
+        function step(ts) {
+          if (!start) start = ts;
+          var p = Math.min((ts - start) / dur, 1);
+          var eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(eased * target).toString();
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+      var counters = document.querySelectorAll("[data-count]");
+      if ("IntersectionObserver" in window) {
+        var co = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { animateCount(e.target); co.unobserve(e.target); }
+          });
+        }, { threshold: 0.6 });
+        counters.forEach(function (el) { co.observe(el); });
+      } else {
+        counters.forEach(function (el) { el.textContent = el.getAttribute("data-count"); });
+      }
+    })();
   </script>
 </body>
 </html>
