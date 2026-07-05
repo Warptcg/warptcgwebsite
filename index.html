@@ -102,6 +102,7 @@
     /* Header scrolled state */
     #site-header { transition: background-color .3s ease, backdrop-filter .3s ease, border-color .3s ease, padding .3s ease; }
     #site-header.scrolled { background-color: rgba(8,9,12,0.72); backdrop-filter: blur(12px); border-color: rgba(126,34,206,0.25); }
+    #site-header.menu-open { background-color: rgba(8,9,12,0.95); backdrop-filter: blur(12px); border-color: rgba(126,34,206,0.25); }
 
     /* Buttons */
     .btn-glow { position: relative; }
@@ -152,10 +153,27 @@
            class="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-toxic-green/30 bg-toxic-green/5 text-toxic-green transition-all duration-300 hover:border-toxic-green hover:bg-toxic-green/15 hover:shadow-[0_0_18px_rgba(127,255,42,0.4)]">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.653l-5.214-6.817-5.966 6.817H1.68l7.73-8.835L1.254 2.25h6.826l4.712 6.231 5.452-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644Z"/></svg>
         </a>
-        <a href="#waitlist" class="hidden sm:inline-flex items-center rounded-lg bg-toxic-green px-4 py-2.5 text-sm font-display font-bold uppercase tracking-wide text-gunmetal-dark transition-all duration-300 hover:bg-toxic-green-dim hover:shadow-[0_0_20px_rgba(127,255,42,0.55)]">
+        <a href="#waitlist" class="hidden sm:inline-flex md:inline-flex items-center rounded-lg bg-toxic-green px-4 py-2.5 text-sm font-display font-bold uppercase tracking-wide text-gunmetal-dark transition-all duration-300 hover:bg-toxic-green-dim hover:shadow-[0_0_20px_rgba(127,255,42,0.55)]">
           Join
         </a>
+        <!-- Hamburger (mobile only) -->
+        <button id="menu-toggle" type="button" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false"
+                class="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-lg border border-purple-500/40 bg-warp-purple/10 text-gray-200 transition-all duration-300 hover:border-warp-purple hover:text-white">
+          <svg id="menu-icon-open" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg id="menu-icon-close" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
       </div>
+    </div>
+
+    <!-- Mobile dropdown menu -->
+    <div id="mobile-menu" class="md:hidden hidden border-t border-purple-500/20 bg-gunmetal-dark/95 backdrop-blur-lg">
+      <nav class="max-w-7xl mx-auto px-5 py-4 flex flex-col gap-1 text-sm font-semibold uppercase tracking-wider text-gray-200">
+        <a href="#factions" class="mobile-link rounded-lg px-4 py-3 transition-colors hover:bg-warp-purple/15 hover:text-toxic-green">Factions</a>
+        <a href="#forge" class="mobile-link rounded-lg px-4 py-3 transition-colors hover:bg-warp-purple/15 hover:text-toxic-green">The Game</a>
+        <a href="#compete" class="mobile-link rounded-lg px-4 py-3 transition-colors hover:bg-warp-purple/15 hover:text-toxic-green">Compete</a>
+        <a href="#marketplace" class="mobile-link rounded-lg px-4 py-3 transition-colors hover:bg-warp-purple/15 hover:text-toxic-green">Marketplace</a>
+        <a href="#waitlist" class="mobile-link rounded-lg px-4 py-3 transition-colors hover:bg-warp-purple/15 hover:text-toxic-green">Waitlist</a>
+      </nav>
     </div>
   </header>
 
@@ -757,6 +775,37 @@
       }
       window.addEventListener("scroll", onScroll, { passive: true });
       onScroll();
+
+      // Mobile hamburger menu
+      var menuToggle = document.getElementById("menu-toggle");
+      var mobileMenu = document.getElementById("mobile-menu");
+      var iconOpen = document.getElementById("menu-icon-open");
+      var iconClose = document.getElementById("menu-icon-close");
+      function setMenu(open) {
+        if (!menuToggle || !mobileMenu) return;
+        mobileMenu.classList.toggle("hidden", !open);
+        if (iconOpen) iconOpen.classList.toggle("hidden", open);
+        if (iconClose) iconClose.classList.toggle("hidden", !open);
+        menuToggle.setAttribute("aria-expanded", open ? "true" : "false");
+        menuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+        if (header) header.classList.toggle("menu-open", open);
+      }
+      if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener("click", function () {
+          setMenu(mobileMenu.classList.contains("hidden"));
+        });
+        // Close after tapping a link
+        mobileMenu.querySelectorAll("a").forEach(function (a) {
+          a.addEventListener("click", function () { setMenu(false); });
+        });
+        // Close on Escape or when resizing up to desktop
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") setMenu(false);
+        });
+        window.addEventListener("resize", function () {
+          if (window.innerWidth >= 768) setMenu(false);
+        });
+      }
 
       // Scroll-reveal via IntersectionObserver
       var reveals = document.querySelectorAll(".reveal");
