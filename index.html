@@ -264,7 +264,8 @@
   </div>
 
   <!-- ============ FACTIONS ============ -->
-  <!-- NOTE: The 4 "Coming Soon" teaser lines are neutral placeholders — replace when faction reveals are ready. -->
+  <!-- NOTE: 5 factions revealed (Flayed, Legion, Enlightened, Arcon, Nomads). Faction VI teaser is a neutral placeholder. -->
+  <!-- New-faction descriptions/bullets are derived only from client-provided mechanics — no invented lore. -->
   <section id="factions" class="relative z-10">
     <div class="max-w-7xl mx-auto px-6 py-24 md:py-32">
       <div class="text-center mb-16">
@@ -273,14 +274,14 @@
         <p class="reveal d2 mt-4 text-gray-400 max-w-2xl mx-auto">The Warp fractured the world. Only one truth survives the collision — the one you fight for.</p>
       </div>
 
-      <!-- Known factions -->
-      <div class="grid md:grid-cols-2 gap-8">
-        <!-- Card 1 — THE FLAYED (red) -->
-        <article class="reveal group relative overflow-hidden rounded-2xl border border-red-500/30 bg-gradient-to-b from-red-600/15 to-transparent p-8 md:p-10 transition-all duration-500 hover:border-red-500/70 hover:shadow-[0_0_40px_rgba(220,38,38,0.25)]">
+      <!-- Factions (5 revealed + 1 unrevealed) -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <!-- Flayed (red) -->
+        <article class="reveal group relative overflow-hidden rounded-2xl border border-red-500/30 bg-gradient-to-b from-red-600/15 to-transparent p-8 transition-all duration-500 hover:border-red-500/70 hover:shadow-[0_0_40px_rgba(220,38,38,0.25)]">
           <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-red-600/20 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-60"></div>
           <div class="relative">
             <span class="text-xs font-semibold uppercase tracking-[0.25em] text-red-300/80">The Butchers of Men</span>
-            <h3 class="mt-2 font-display text-3xl font-bold text-white">The Flayed</h3>
+            <h3 class="mt-2 font-display text-3xl font-bold text-white">Flayed</h3>
             <p class="mt-4 text-gray-300/90 leading-relaxed">Corrupted humans who answered the Warp with steel and savagery. They wear their brutality openly — forged iron, taken trophies, and a hunger that no conquest satisfies.</p>
             <ul class="mt-6 space-y-2 text-sm text-gray-400">
               <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Relentless aggression &amp; pressure</li>
@@ -290,13 +291,13 @@
           </div>
         </article>
 
-        <!-- Card 2 — THE TORMENTED LEGION (necrotic purple w/ green-tinged highlights) -->
-        <article class="reveal d1 group relative overflow-hidden rounded-2xl border border-warp-purple/40 bg-gradient-to-b from-warp-purple/15 via-toxic-green/5 to-transparent p-8 md:p-10 transition-all duration-500 hover:border-warp-purple/70 hover:shadow-[0_0_40px_rgba(126,34,206,0.28)]">
+        <!-- Legion (necrotic purple w/ green-tinged highlights) -->
+        <article class="reveal d1 group relative overflow-hidden rounded-2xl border border-warp-purple/40 bg-gradient-to-b from-warp-purple/15 via-toxic-green/5 to-transparent p-8 transition-all duration-500 hover:border-warp-purple/70 hover:shadow-[0_0_40px_rgba(126,34,206,0.28)]">
           <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-warp-purple/25 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-60"></div>
           <div class="absolute -bottom-20 -left-16 w-52 h-52 rounded-full bg-toxic-green/10 blur-3xl opacity-70"></div>
           <div class="relative">
             <span class="text-xs font-semibold uppercase tracking-[0.25em] text-purple-300/80">The Blight Eternal</span>
-            <h3 class="mt-2 font-display text-3xl font-bold text-white">The Tormented Legion</h3>
+            <h3 class="mt-2 font-display text-3xl font-bold text-white">Legion</h3>
             <p class="mt-4 text-gray-300/90 leading-relaxed">Undead elves twisted by the Warp into something ancient and wrong. They do not protect the land — they drain it, marching beneath banners of necrotic purple and sickly green.</p>
             <ul class="mt-6 space-y-2 text-sm text-gray-400">
               <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-warp-purple"></span> Attrition, decay &amp; inevitability</li>
@@ -305,46 +306,71 @@
             </ul>
           </div>
         </article>
+
+        <!-- Enlightened (radiant gold/ivory) -->
+        <article class="reveal d2 group relative overflow-hidden rounded-2xl border border-amber-300/30 bg-gradient-to-b from-amber-200/10 to-transparent p-8 transition-all duration-500 hover:border-amber-300/70 hover:shadow-[0_0_40px_rgba(251,191,36,0.22)]">
+          <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-amber-300/20 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-60"></div>
+          <div class="relative">
+            <span class="text-xs font-semibold uppercase tracking-[0.25em] text-amber-200/80">The Radiant Order</span>
+            <h3 class="mt-2 font-display text-3xl font-bold text-white">Enlightened</h3>
+            <p class="mt-4 text-gray-300/90 leading-relaxed">Healing, protection, and resilience — Vanguard walls, heal synergies, and turning aggression back on the attacker.</p>
+            <ul class="mt-6 space-y-2 text-sm text-gray-400">
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-amber-300"></span> Vanguard walls &amp; protection</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-amber-300"></span> Heal synergies &amp; sustain</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-amber-300"></span> Reflect aggression back on attackers</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- Arcon (sapphire/silver) -->
+        <article class="reveal group relative overflow-hidden rounded-2xl border border-sky-400/30 bg-gradient-to-b from-blue-500/12 to-transparent p-8 transition-all duration-500 hover:border-sky-400/70 hover:shadow-[0_0_40px_rgba(56,189,248,0.22)]">
+          <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-sky-500/20 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-60"></div>
+          <div class="relative">
+            <span class="text-xs font-semibold uppercase tracking-[0.25em] text-sky-200/80">The Cold Calculus</span>
+            <h3 class="mt-2 font-display text-3xl font-bold text-white">Arcon</h3>
+            <p class="mt-4 text-gray-300/90 leading-relaxed">Control, tempo, and resourcefulness — resource manipulation, mirroring, and relentless card advantage.</p>
+            <ul class="mt-6 space-y-2 text-sm text-gray-400">
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span> Resource manipulation</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span> Mirroring &amp; tempo control</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span> Relentless card advantage</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- Nomads (bronze/steampunk-scrap) -->
+        <article class="reveal d1 group relative overflow-hidden rounded-2xl border border-amber-700/40 bg-gradient-to-b from-amber-700/12 to-transparent p-8 transition-all duration-500 hover:border-amber-600/70 hover:shadow-[0_0_40px_rgba(180,83,9,0.25)]">
+          <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-amber-700/25 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-60"></div>
+          <div class="relative">
+            <span class="text-xs font-semibold uppercase tracking-[0.25em] text-amber-400/80">The Salvaged</span>
+            <h3 class="mt-2 font-display text-3xl font-bold text-white">Nomads</h3>
+            <p class="mt-4 text-gray-300/90 leading-relaxed">Scrappy improvisation and swarm — rally effects, token generation, and salvaged power.</p>
+            <ul class="mt-6 space-y-2 text-sm text-gray-400">
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span> Rally effects &amp; swarm</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span> Token generation</li>
+              <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span> Salvaged, improvised power</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- Faction VI — unrevealed (bone-white / ash hint only) -->
+        <article class="reveal d2 group relative overflow-hidden rounded-2xl border border-stone-300/15 bg-gradient-to-b from-stone-300/5 to-transparent p-8 flex flex-col items-center justify-center text-center transition-all duration-300 hover:border-stone-300/30">
+          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-stone-300/25 bg-stone-400/10 text-stone-300/70">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          </div>
+          <span class="block text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-400/70">Faction VI</span>
+          <h3 class="mt-1 font-display text-2xl font-bold text-stone-300">Coming Soon</h3>
+          <p class="mt-2 text-xs text-stone-400/70 leading-relaxed">Bone-white and ash — the rest is unrevealed.</p>
+        </article>
       </div>
 
-      <!-- Coming soon factions -->
-      <div class="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <!-- Tile III -->
-        <article class="reveal group relative overflow-hidden rounded-2xl border border-gray-600/20 bg-gunmetal/30 p-6 text-center transition-all duration-300 hover:border-gray-500/40">
-          <div class="mx-auto mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-gray-600/30 bg-gray-700/20 text-gray-500">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+      <!-- Arcana cross-faction callout (spells, not a 7th faction) -->
+      <div class="reveal mt-6 md:mt-8 rounded-2xl border border-purple-500/25 bg-gradient-to-r from-toxic-green/10 via-transparent to-warp-purple/15 p-6 md:p-7">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-toxic-green/30 bg-gradient-to-br from-toxic-green/15 to-warp-purple/25 text-toxic-green">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.4 5.3L20 11l-5.6 2.7L12 19l-2.4-5.3L4 11l5.6-2.7L12 3z"/></svg>
           </div>
-          <span class="block text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-600">Faction III</span>
-          <h3 class="mt-1 font-display text-lg font-bold text-gray-400">Coming Soon</h3>
-          <p class="mt-2 text-xs text-gray-600 leading-relaxed">New powers stir beyond the rift.</p>
-        </article>
-        <!-- Tile IV -->
-        <article class="reveal d1 group relative overflow-hidden rounded-2xl border border-gray-600/20 bg-gunmetal/30 p-6 text-center transition-all duration-300 hover:border-gray-500/40">
-          <div class="mx-auto mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-gray-600/30 bg-gray-700/20 text-gray-500">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-          </div>
-          <span class="block text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-600">Faction IV</span>
-          <h3 class="mt-1 font-display text-lg font-bold text-gray-400">Coming Soon</h3>
-          <p class="mt-2 text-xs text-gray-600 leading-relaxed">Something ancient waits to be named.</p>
-        </article>
-        <!-- Tile V -->
-        <article class="reveal d2 group relative overflow-hidden rounded-2xl border border-gray-600/20 bg-gunmetal/30 p-6 text-center transition-all duration-300 hover:border-gray-500/40">
-          <div class="mx-auto mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-gray-600/30 bg-gray-700/20 text-gray-500">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-          </div>
-          <span class="block text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-600">Faction V</span>
-          <h3 class="mt-1 font-display text-lg font-bold text-gray-400">Coming Soon</h3>
-          <p class="mt-2 text-xs text-gray-600 leading-relaxed">The Warp is not finished with this world.</p>
-        </article>
-        <!-- Tile VI -->
-        <article class="reveal d3 group relative overflow-hidden rounded-2xl border border-gray-600/20 bg-gunmetal/30 p-6 text-center transition-all duration-300 hover:border-gray-500/40">
-          <div class="mx-auto mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-gray-600/30 bg-gray-700/20 text-gray-500">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-          </div>
-          <span class="block text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-600">Faction VI</span>
-          <h3 class="mt-1 font-display text-lg font-bold text-gray-400">Coming Soon</h3>
-          <p class="mt-2 text-xs text-gray-600 leading-relaxed">More will claw their way through the rift.</p>
-        </article>
+          <p class="text-sm text-gray-300/90 leading-relaxed"><span class="font-display font-bold text-white">Arcana</span> are cross-faction <span class="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-toxic-green to-warp-purple">spell cards</span> — not a seventh faction. Raw Warp energy in green and purple, playable in <span class="text-white font-semibold">any</span> deck, whatever your allegiance.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -502,21 +528,50 @@
               <span class="text-xs uppercase tracking-widest text-gray-600">Price ◈</span>
             </div>
             <div class="divide-y divide-purple-500/10 text-sm">
-              <div class="flex items-center justify-between py-3">
-                <span class="font-medium text-gray-200">Voidmaw Reaver</span>
-                <span class="flex items-center gap-3"><span class="text-white tabular-nums">1,240</span><span class="text-toxic-green text-xs font-semibold">▲ 12%</span></span>
+              <!-- color = faction: Flayed red · Legion purple · Enlightened gold · Arcon sapphire · Nomads bronze -->
+              <div class="flex items-center justify-between py-2.5">
+                <span class="font-medium text-red-300">Lord of Flesh</span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">2,980</span><span class="text-toxic-green text-xs font-semibold">▲ 18%</span></span>
               </div>
-              <div class="flex items-center justify-between py-3">
-                <span class="font-medium text-gray-200">Verdant Warden</span>
-                <span class="flex items-center gap-3"><span class="text-white tabular-nums">880</span><span class="text-red-400 text-xs font-semibold">▼ 4%</span></span>
+              <div class="flex items-center justify-between py-2.5">
+                <span class="font-medium text-red-300">Abom Flesh Ripper</span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">1,120</span><span class="text-toxic-green text-xs font-semibold">▲ 6%</span></span>
               </div>
-              <div class="flex items-center justify-between py-3">
-                <span class="font-medium text-gray-200">Warp Sigil <span class="text-purple-300/70 text-xs">· Mythic</span></span>
-                <span class="flex items-center gap-3"><span class="text-white tabular-nums">3,410</span><span class="text-toxic-green text-xs font-semibold">▲ 28%</span></span>
+              <div class="flex items-center justify-between py-2.5">
+                <span class="font-medium text-red-300">Vexis</span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">640</span><span class="text-red-400 text-xs font-semibold">▼ 3%</span></span>
               </div>
-              <div class="flex items-center justify-between py-3">
-                <span class="font-medium text-gray-200">Ashen Acolyte</span>
-                <span class="flex items-center gap-3"><span class="text-white tabular-nums">210</span><span class="text-toxic-green text-xs font-semibold">▲ 3%</span></span>
+              <div class="flex items-center justify-between py-2.5">
+                <span class="font-medium text-purple-300">Trixie</span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">1,540</span><span class="text-toxic-green text-xs font-semibold">▲ 9%</span></span>
+              </div>
+              <div class="flex items-center justify-between py-2.5">
+                <span class="font-medium text-purple-300">Golem of Souls</span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">2,210</span><span class="text-toxic-green text-xs font-semibold">▲ 14%</span></span>
+              </div>
+              <div class="flex items-center justify-between py-2.5">
+                <span class="font-medium text-amber-200">Libra the Artist</span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">1,870</span><span class="text-red-400 text-xs font-semibold">▼ 5%</span></span>
+              </div>
+              <div class="flex items-center justify-between py-2.5">
+                <span class="font-medium text-amber-200">Vecchio Father of Time</span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">3,640</span><span class="text-toxic-green text-xs font-semibold">▲ 22%</span></span>
+              </div>
+              <div class="flex items-center justify-between py-2.5">
+                <span class="font-medium text-sky-300">Harold</span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">420</span><span class="text-toxic-green text-xs font-semibold">▲ 2%</span></span>
+              </div>
+              <div class="flex items-center justify-between py-2.5">
+                <span class="font-medium text-sky-300">Luna</span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">1,290</span><span class="text-toxic-green text-xs font-semibold">▲ 7%</span></span>
+              </div>
+              <div class="flex items-center justify-between py-2.5">
+                <span class="font-medium text-amber-400">Soriah</span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">760</span><span class="text-red-400 text-xs font-semibold">▼ 4%</span></span>
+              </div>
+              <div class="flex items-center justify-between py-2.5">
+                <span class="font-medium text-amber-400">Dorian the Catalyst</span>
+                <span class="flex items-center gap-3"><span class="text-white tabular-nums">2,050</span><span class="text-toxic-green text-xs font-semibold">▲ 11%</span></span>
               </div>
             </div>
             <p class="pt-3 text-[11px] text-gray-600">Illustrative prices — the real market is set live by players.</p>
@@ -569,11 +624,11 @@
       <!-- Stats -->
       <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 rounded-2xl border border-purple-500/20 bg-gunmetal-dark/50 p-8">
         <div class="reveal text-center">
-          <div class="font-display text-4xl font-black text-white"><span data-count="2">0</span></div>
+          <div class="font-display text-4xl font-black text-white"><span data-count="6">0</span></div>
           <div class="mt-1 text-xs uppercase tracking-widest text-gray-500">Warring Factions</div>
         </div>
         <div class="reveal d1 text-center">
-          <div class="font-display text-4xl font-black text-white"><span data-count="200">0</span><span class="text-toxic-green">+</span></div>
+          <div class="font-display text-4xl font-black text-white"><span data-count="180">0</span><span class="text-toxic-green">+</span></div>
           <div class="mt-1 text-xs uppercase tracking-widest text-gray-500">Collectible Cards</div>
         </div>
         <div class="reveal d2 text-center">
@@ -854,8 +909,19 @@
           entries.forEach(function (e) {
             if (e.isIntersecting) { animateCount(e.target); co.unobserve(e.target); }
           });
-        }, { threshold: 0.6 });
+        }, { threshold: 0.2 });
         counters.forEach(function (el) { co.observe(el); });
+        // Safety net: if a counter never triggers (edge cases), land it on its value.
+        window.addEventListener("load", function () {
+          setTimeout(function () {
+            counters.forEach(function (el) {
+              if (el.textContent === "0" && el.getAttribute("data-count") !== "0") {
+                var r = el.getBoundingClientRect();
+                if (r.top < window.innerHeight && r.bottom > 0) animateCount(el);
+              }
+            });
+          }, 1200);
+        });
       } else {
         counters.forEach(function (el) { el.textContent = el.getAttribute("data-count"); });
       }
